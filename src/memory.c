@@ -1,39 +1,119 @@
-#include "memory.h"
+#include "../include/memory.h"
+#include "../include/BIT_MATH.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 // private Memory struct
-typedef struct Memory {
+typedef struct Memory
+{
     int memory_block[MAX_NUMBER_OF_ROWS];
-}Memory;
+} Memory;
 
-//static to ensure file scope.
-//private Memory Instance 
+// static to ensure file scope.
+// private Memory Instance
 static Memory memoryInstance;
 
 // Global Access point for the memoryInstance
-MemoryPtr createMemory(){
+MemoryPtr createMemory()
+{
     static MemoryPtr mem = &memoryInstance;
     // printf("address is %p\n", mem);
     return mem;
 }
 
-
-
 // Write data to the memory block at the specified address
-void write(MemoryPtr mem, int data, int addr) {
-    if (addr >= MIN_NUMBER_OF_ROWS && addr < MAX_NUMBER_OF_ROWS) {
+void write(MemoryPtr mem, int data, int addr)
+{
+    if (mem == NULL)
+    {
+        fprintf(stderr, "Error: Memory is NULL\n");
+        return;
+    }
+
+    if (addr >= MIN_NUMBER_OF_ROWS && addr < MAX_NUMBER_OF_ROWS)
+    {
         mem->memory_block[addr] = data;
-    } else {
+    }
+    else
+    {
         fprintf(stderr, "Error: Invalid memory access\n");
     }
 }
 
 // Read data from the memory block at the specified address
-int read(MemoryPtr mem, int addr) {
-    if (addr >= MIN_NUMBER_OF_ROWS && addr < MAX_NUMBER_OF_ROWS) {
+int read(MemoryPtr mem, int addr)
+{
+    if (mem == NULL)
+    {
+        fprintf(stderr, "Error: Memory is NULL\n");
+        return -1;
+    }
+
+    if (addr >= MIN_NUMBER_OF_ROWS && addr < MAX_NUMBER_OF_ROWS)
+    {
         return mem->memory_block[addr];
-    } else {
+    }
+    else
+    {
+        fprintf(stderr, "Error: Invalid memory access\n");
+        return -2; // or handle error in a suitable way
+    }
+}
+
+// Write data to the memory block at the specified address
+void set_bit(MemoryPtr mem, int row, int col)
+{
+    if (mem == NULL)
+    {
+        fprintf(stderr, "Error: Memory is NULL\n");
+        return;
+    }
+
+    if (row >= MIN_NUMBER_OF_ROWS && row < MAX_NUMBER_OF_ROWS)
+    {
+        if (col >= MIN_NUMBER_OF_COLS && col < MAX_NUMBER_OF_COLS)
+        {
+            SET_BIT(mem->memory_block[row], col);
+        }
+    }
+    else
+    {
+        fprintf(stderr, "Error: Invalid memory access\n");
+    }
+}
+
+void clr_bit(MemoryPtr mem, int row, int col)
+{
+    if (mem == NULL)
+    {
+        fprintf(stderr, "Error: Memory is NULL\n");
+        return;
+    }
+    if (row >= MIN_NUMBER_OF_ROWS && row < MAX_NUMBER_OF_ROWS)
+    {
+        if (col >= MIN_NUMBER_OF_COLS && col < MAX_NUMBER_OF_COLS)
+        {
+            CLR_BIT(mem->memory_block[row], col);
+        }
+    }
+    else
+    {
+        fprintf(stderr, "Error: Invalid memory access\n");
+    }
+}
+
+// Read data from the memory block at the specified address
+int read_bit(MemoryPtr mem, int row, int col)
+{
+    if (row >= MIN_NUMBER_OF_ROWS && row < MAX_NUMBER_OF_ROWS)
+    {
+        if (col >= MIN_NUMBER_OF_COLS && col < MAX_NUMBER_OF_COLS)
+        {
+            return GET_BIT(mem->memory_block[row], col);
+        }
+    }
+    else
+    {
         fprintf(stderr, "Error: Invalid memory access\n");
         return -1; // or handle error in a suitable way
     }
