@@ -10,6 +10,8 @@ typedef struct Memory
 } Memory;
 
 
+static Memory* mem;
+
 
 
 
