@@ -7,7 +7,6 @@
 #define MAX_NUMBER_OF_COLS 32
 #define MIN_NUMBER_OF_COLS 0
 
-typedef struct Memory* MemoryPtr;
 
 
 // public Memory struct
@@ -16,12 +15,12 @@ typedef struct Memory* MemoryPtr;
 // }Memory;
 
 
-int read(MemoryPtr mem, int addr);
-void write(MemoryPtr mem, int data, int addr);
+int read_memory(int addr);
+void write_memory(int data, int addr);
 
-void set_bit(MemoryPtr mem, int row, int col);
-void clr_bit(MemoryPtr mem, int row, int col);
-int read_bit(MemoryPtr mem, int row, int col);
-MemoryPtr createMemory();
+void set_bit(int row, int col);
+void clr_bit(int row, int col);
+int read_bit(int row, int col);
+
 
 #endif
