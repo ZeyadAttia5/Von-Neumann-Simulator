@@ -3,7 +3,7 @@
 
 char* decode (Instruction* instruction, int reg){
     
-    instruction->opcode = (reg >> 28) && 15;
+    instruction->opcode = (reg >> 28) & 15;
     switch (instruction->opcode)
     {
     case 0b0000:
