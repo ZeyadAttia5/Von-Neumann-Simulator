@@ -1,7 +1,9 @@
 #ifndef REGISTER_SET
 #define REGISTER_SET
 
-typedef struct register_set *registerSetPtr;
+int read_register(int register_no);
+
+void write_register(int register_no, int write_value);
 
 
 
