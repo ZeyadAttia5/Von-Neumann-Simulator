@@ -13,4 +13,3 @@ int main()
 
     // singleton
     //  First-Class Abstarct Data Type
-}
