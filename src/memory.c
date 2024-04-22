@@ -9,20 +9,14 @@ typedef struct Memory
     int memory_block[MAX_NUMBER_OF_ROWS];
 } Memory;
 
-// static to ensure file scope.
-// private Memory Instance
-static Memory memoryInstance;
 
-// Global Access point for the memoryInstance
-MemoryPtr createMemory()
-{
-    static MemoryPtr mem = &memoryInstance;
-    // printf("address is %p\n", mem);
-    return mem;
-}
+static Memory* mem;
+
+
+
 
 // Write data to the memory block at the specified address
-void write(MemoryPtr mem, int data, int addr)
+void write_memory(int data, int addr)
 {
     if (mem == NULL)
     {
@@ -41,7 +35,7 @@ void write(MemoryPtr mem, int data, int addr)
 }
 
 // Read data from the memory block at the specified address
-int read(MemoryPtr mem, int addr)
+int read_memory(int addr)
 {
     if (mem == NULL)
     {
@@ -61,7 +55,7 @@ int read(MemoryPtr mem, int addr)
 }
 
 // Write data to the memory block at the specified address
-void set_bit(MemoryPtr mem, int row, int col)
+void set_bit(int row, int col)
 {
     if (mem == NULL)
     {
@@ -82,7 +76,7 @@ void set_bit(MemoryPtr mem, int row, int col)
     }
 }
 
-void clr_bit(MemoryPtr mem, int row, int col)
+void clr_bit(int row, int col)
 {
     if (mem == NULL)
     {
@@ -103,7 +97,7 @@ void clr_bit(MemoryPtr mem, int row, int col)
 }
 
 // Read data from the memory block at the specified address
-int read_bit(MemoryPtr mem, int row, int col)
+int read_bit(int row, int col)
 {
     if (row >= MIN_NUMBER_OF_ROWS && row < MAX_NUMBER_OF_ROWS)
     {
