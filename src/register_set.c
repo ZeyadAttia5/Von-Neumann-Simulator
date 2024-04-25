@@ -1,48 +1,73 @@
-#include "../include/register_set.h"
-#define NUM_REGISTERS 31
-#define TOTAL_REGISTERS 33
-#define ZERO 0
+#include <stdio.h>
 
-typedef struct register_set{
-    const int r0 = ZERO;
-    
-    int registers[NUM_REGISTERS];
 
+/// @brief Private Register File
+typedef struct Register_File
+{
+
+    // 32 registers
+    int reg[32];
+
+    // Program Counter
     int pc;
-} register_set;
 
-static register_set register_set_instance;
+} Register_File;
 
-int read_register(int register_no){
-    if (register_no < ZERO || register_no > TOTAL_REGISTERS){
-        fprintf(stderr, "Register index must be between 0 & 33");
+
+/// @brief Singleton Register File
+static Register_File reg;
+
+/// @brief read the value from the register_no
+/// @param register_no 
+/// @return 
+int read_register(int register_no)
+{
+    if (register_no < 0 || register_no > 32)
+    {
+        fprintf(stderr, "Invalid register number\n");
         return -1;
     }
-    if(register_no == TOTAL_REGISTERS) return register_set_instance.pc;
 
-    if(register_no == ZERO) return register_set_instance.rZERO;
-
-    return register_set_instance.registers[register_no];
+    if (register_no == 0)
+    {
+        // R0 is always 0
+        return 0;
+    }
+    if (register_no == 32)
+    {
+        // PC register
+        return reg.pc;
+    }
+    else
+    {
+        return reg.reg[register_no];
+    }
 }
 
+/// @brief write the write_value to the register_no
+/// @param register_no 
+/// @param write_value 
+void write_register(int register_no, int write_value)
+{
 
-void write_register(int register_no, int write_value){
-    if (register_no < ZERO || register_no > TOTAL_REGISTERS){
-        fprintf(stderr, "Register index must be between 0 & 33");
-        return;
+    if (register_no < 0 || register_no > 32)
+    {
+        fprintf(stderr, "Invalid register number\n");
+        // return -1;
     }
 
-    if(register_no == ZERO){ 
-        fprintf(stderr, "Cannot alter the zero register");
+    if (register_no == 0)
+    {
+        // R0 is always 0; cant be overwritten
         return;
     }
-
-    if(register_no == TOTAL_REGISTERS) register_set_instance.pc = value;
-
-    else register_set_instance[register_no] = value;
+    if (register_no == 32)
+    {
+        // PC register
+        reg.pc = write_value;
+    }
+    else
+    {
+        reg.reg[register_no] = write_value;
+    }
 }
-
-
-
-
-
