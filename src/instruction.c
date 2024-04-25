@@ -1,5 +1,6 @@
 #include "instruction.h"
 #include "register_set.h"
+#include "memory.h"
 
 /// @brief decode instruction
 /// @param instruction pointer to instruction struct
@@ -153,4 +154,25 @@ void mul(Instruction *instruction)
 void movi(Instruction *instruction)
 {
     write_register(instruction->r1, instruction->immediate);
+}
+
+void lsr(Instruction *instruction)
+{
+    instruction->r1 = LOGI_RSHIFT_REG(instruction->r2,instruction->shamt);
+}
+
+void movr(Instruction *instruction)
+{
+
+    int memoryAddress = instruction->r2 + instruction->immediate;
+    
+    // must wait for memory in instruction cycle
+}
+
+void movm(Instruction *instruction)
+{
+
+    int memoryAddress = instruction->r2 + instruction->immediate;
+
+    // must wait for memory in instruction cycle
 }

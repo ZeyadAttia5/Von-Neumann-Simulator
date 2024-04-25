@@ -129,6 +129,30 @@ main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+src/instruction.o: src/instruction.c.o
+.PHONY : src/instruction.o
+
+# target to build an object file
+src/instruction.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/instruction.c.o
+.PHONY : src/instruction.c.o
+
+src/instruction.i: src/instruction.c.i
+.PHONY : src/instruction.i
+
+# target to preprocess a source file
+src/instruction.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/instruction.c.i
+.PHONY : src/instruction.c.i
+
+src/instruction.s: src/instruction.c.s
+.PHONY : src/instruction.s
+
+# target to generate assembly for a file
+src/instruction.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/instruction.c.s
+.PHONY : src/instruction.c.s
+
 src/main.o: src/main.c.o
 .PHONY : src/main.o
 
@@ -177,29 +201,29 @@ src/memory.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/memory.c.s
 .PHONY : src/memory.c.s
 
-src/reg.o: src/reg.c.o
-.PHONY : src/reg.o
+src/register_set.o: src/register_set.c.o
+.PHONY : src/register_set.o
 
 # target to build an object file
-src/reg.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/reg.c.o
-.PHONY : src/reg.c.o
+src/register_set.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/register_set.c.o
+.PHONY : src/register_set.c.o
 
-src/reg.i: src/reg.c.i
-.PHONY : src/reg.i
+src/register_set.i: src/register_set.c.i
+.PHONY : src/register_set.i
 
 # target to preprocess a source file
-src/reg.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/reg.c.i
-.PHONY : src/reg.c.i
+src/register_set.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/register_set.c.i
+.PHONY : src/register_set.c.i
 
-src/reg.s: src/reg.c.s
-.PHONY : src/reg.s
+src/register_set.s: src/register_set.c.s
+.PHONY : src/register_set.s
 
 # target to generate assembly for a file
-src/reg.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/reg.c.s
-.PHONY : src/reg.c.s
+src/register_set.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/register_set.c.s
+.PHONY : src/register_set.c.s
 
 # Help Target
 help:
@@ -210,15 +234,18 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
+	@echo "... src/instruction.o"
+	@echo "... src/instruction.i"
+	@echo "... src/instruction.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
 	@echo "... src/memory.o"
 	@echo "... src/memory.i"
 	@echo "... src/memory.s"
-	@echo "... src/reg.o"
-	@echo "... src/reg.i"
-	@echo "... src/reg.s"
+	@echo "... src/register_set.o"
+	@echo "... src/register_set.i"
+	@echo "... src/register_set.s"
 .PHONY : help
 
 

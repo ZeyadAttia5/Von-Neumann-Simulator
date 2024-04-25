@@ -8,13 +8,7 @@
 #define MIN_NUMBER_OF_COLS 0
 
 
-
-// public Memory struct
-// typedef struct Memory {
-//     int memory_block[MAX_NUMBER_OF_ROWS];
-// }Memory;
-
-
+void initialize_memory();
 int read_memory(int addr);
 void write_memory(int data, int addr);
 

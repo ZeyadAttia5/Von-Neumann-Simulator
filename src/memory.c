@@ -10,7 +10,9 @@ typedef struct Memory
 } Memory;
 
 
-static Memory* mem;
+static Memory mem;
+
+
 
 
 
@@ -18,15 +20,11 @@ static Memory* mem;
 // Write data to the memory block at the specified address
 void write_memory(int data, int addr)
 {
-    if (mem == NULL)
-    {
-        fprintf(stderr, "Error: Memory is NULL\n");
-        return;
-    }
+    
 
     if (addr >= MIN_NUMBER_OF_ROWS && addr < MAX_NUMBER_OF_ROWS)
     {
-        mem->memory_block[addr] = data;
+        mem.memory_block[addr] = data;
     }
     else
     {
@@ -37,15 +35,11 @@ void write_memory(int data, int addr)
 // Read data from the memory block at the specified address
 int read_memory(int addr)
 {
-    if (mem == NULL)
-    {
-        fprintf(stderr, "Error: Memory is NULL\n");
-        return -1;
-    }
+    
 
     if (addr >= MIN_NUMBER_OF_ROWS && addr < MAX_NUMBER_OF_ROWS)
     {
-        return mem->memory_block[addr];
+        return mem.memory_block[addr];
     }
     else
     {
@@ -57,17 +51,13 @@ int read_memory(int addr)
 // Write data to the memory block at the specified address
 void set_bit(int row, int col)
 {
-    if (mem == NULL)
-    {
-        fprintf(stderr, "Error: Memory is NULL\n");
-        return;
-    }
+    
 
     if (row >= MIN_NUMBER_OF_ROWS && row < MAX_NUMBER_OF_ROWS)
     {
         if (col >= MIN_NUMBER_OF_COLS && col < MAX_NUMBER_OF_COLS)
         {
-            SET_BIT(mem->memory_block[row], col);
+            SET_BIT(mem.memory_block[row], col);
         }
     }
     else
@@ -78,16 +68,12 @@ void set_bit(int row, int col)
 
 void clr_bit(int row, int col)
 {
-    if (mem == NULL)
-    {
-        fprintf(stderr, "Error: Memory is NULL\n");
-        return;
-    }
+    
     if (row >= MIN_NUMBER_OF_ROWS && row < MAX_NUMBER_OF_ROWS)
     {
         if (col >= MIN_NUMBER_OF_COLS && col < MAX_NUMBER_OF_COLS)
         {
-            CLR_BIT(mem->memory_block[row], col);
+            CLR_BIT(mem.memory_block[row], col);
         }
     }
     else
@@ -103,7 +89,7 @@ int read_bit(int row, int col)
     {
         if (col >= MIN_NUMBER_OF_COLS && col < MAX_NUMBER_OF_COLS)
         {
-            return GET_BIT(mem->memory_block[row], col);
+            return GET_BIT(mem.memory_block[row], col);
         }
     }
     else
