@@ -154,3 +154,15 @@ void movi(Instruction *instruction)
 {
     write_register(instruction->r1, instruction->immediate);
 }
+
+void add(Instruction *instruction)
+{
+    int addresult = read_register(instruction->r2) + read_register(instruction->r3);
+    write_register(instruction->r1,addresult);
+}
+void sub(Instruction *instruction)
+{
+    int subresult = read_register(instruction->r2) - read_register(instruction->r3);
+    write_register(instruction->r1,subresult);
+}
+
