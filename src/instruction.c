@@ -1,5 +1,6 @@
 #include "instruction.h"
 #include "register_set.h"
+#include "instruction_set.h"
 
 /// @brief decode instruction
 /// @param instruction pointer to instruction struct
@@ -84,8 +85,8 @@ void populate_R(Instruction *instruction, int value)
     instruction->shamt = shamt;
 
     // clear other fields
-    instruction->address = 0;
-    instruction->immediate = 0;
+    instruction->address = -1;
+    instruction->immediate = -1;
 }
 
 /// @brief Instruction I Format: Opcode(4) | R1(5) | R2(5) | Immediate(18)
@@ -104,8 +105,8 @@ void populate_I(Instruction *instruction, int value)
     instruction->immediate = immediate;
 
     // clear other fields
-    instruction->address = 0;
-    instruction->shamt = 0;
+    instruction->address = -1;
+    instruction->shamt = -1;
 }
 
 /// @brief Instruction J Format: Opcode(4) | Address(28)
@@ -117,11 +118,11 @@ void populate_J(Instruction *instruction, int value)
     instruction->address = value & 268435455;
 
     // clear other fields
-    instruction->r1 = 0;
-    instruction->r2 = 0;
-    instruction->r3 = 0;
-    instruction->shamt = 0;
-    instruction->immediate = 0;
+    instruction->r1 = -1;
+    instruction->r2 = -1;
+    instruction->r3 = -1;
+    instruction->shamt = -1;
+    instruction->immediate = -1;
 }
 
 /// @brief execute instruction
@@ -142,27 +143,4 @@ void execute(Instruction *instruction)
     {
         printf("Invalid Instruction\n");
     }
-}
-
-void mul(Instruction *instruction)
-{
-    int result = read_register(instruction->r2) * read_register(instruction->r3);
-    write_register(instruction->r1, result);
-}
-
-void movi(Instruction *instruction)
-{
-    write_register(instruction->r1, instruction->immediate);
-}
-
-void add(Instruction *instruction)
-{
-    int addresult = read_register(instruction->r2) + read_register(instruction->r3);
-    write_register(instruction->r1,addresult);
-}
-void sub(Instruction *instruction)
-{
-    int subresult = read_register(instruction->r2) - read_register(instruction->r3);
-    write_register(instruction->r1,subresult);
-}
 

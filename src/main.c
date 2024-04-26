@@ -22,7 +22,8 @@ int main()
     // create instruction
     Instruction instruction;
 
-    decode(&instruction, TEST_MOVI);
+    // decode(&instruction, TEST_MOVI);
+    decode(&instruction, TEST_MUL);
     execute(&instruction);
 
     printf("Instruction type: %s\n", instruction.type);
@@ -31,7 +32,7 @@ int main()
     printf("Instruction R2: %d\n", instruction.r2);
     printf("Instruction R3: %d\n", instruction.r3);
     printf("Instruction imm: %d\n", instruction.immediate);
-
+    printf("Instruction result: %d\n", instruction.result);    
     // check if the result is stored in R1
     printf("Register R1: %d\n", read_register(instruction.r1));
 
