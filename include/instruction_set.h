@@ -5,6 +5,9 @@
 
 void mul(Instruction *instruction);
 void movi(Instruction *instruction);
+void add(Instruction *instruction);
+void sub(Instruction *instruction);
+
 
 
 #endif

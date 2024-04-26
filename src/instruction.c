@@ -139,8 +139,17 @@ void execute(Instruction *instruction)
     {
         movi(instruction);
     }
+    else if(!strcmp(instr_type, "ADD"))
+    {
+        add(instruction);
+    }
+     else if(!strcmp(instr_type, "SUB"))
+    {
+        sub(instruction);
+    }   
     else
     {
         printf("Invalid Instruction\n");
     }
+}
 

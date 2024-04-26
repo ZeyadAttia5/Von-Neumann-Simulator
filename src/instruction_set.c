@@ -11,3 +11,12 @@ void movi(Instruction *instruction)
 {
     instruction->result = instruction->immediate;
 }
+void add(Instruction *instruction)
+{
+    instruction->result = read_register(instruction->r2) + read_register(instruction->r3);
+}
+void sub(Instruction *instruction)
+{
+    instruction->result = read_register(instruction->r2) - read_register(instruction->r3);
+}
+
