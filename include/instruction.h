@@ -20,6 +20,7 @@ typedef struct Instruction
     int immediate : 18;
     char *type;
 
+    int result;
 } Instruction;
 
 char *decode(Instruction *instruction, int reg);
@@ -33,11 +34,7 @@ void populate_J(Instruction *instruction, int value);
 
 void execute(Instruction *instruction);
 
-void mul(Instruction *instruction);
-void movi(Instruction *instruction);
-void lsr(Instruction *instruction);
-void movr(Instruction *instruction);
-void movm(Instruction *instruction);
+
 
 
 
