@@ -158,13 +158,13 @@ void movi(Instruction *instruction)
 
 void lsr(Instruction *instruction)
 {
-    instruction->r1 = LOGI_RSHIFT_REG(instruction->r2,instruction->shamt);
+    instruction->result = LOGI_RSHIFT_REG(instruction->r2,instruction->shamt);
 }
 
 void movr(Instruction *instruction)
 {
 
-    int memoryAddress = instruction->r2 + instruction->immediate;
+    instruction->result = instruction->r2 + instruction->immediate;
     
     // must wait for memory in instruction cycle
 }
