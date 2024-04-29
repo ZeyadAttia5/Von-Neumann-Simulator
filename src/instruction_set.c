@@ -15,7 +15,7 @@ void movi(Instruction *instruction)
 void jeq (Instruction * instruction)
 {
     if((read_register(instruction->r1) - read_register(instruction->r2))==0){
-    instruction->result = read_register(32)+4*(1+instruction->immediate);
+    instruction->result = read_register(32)+1+instruction->immediate;
     }
 }
 

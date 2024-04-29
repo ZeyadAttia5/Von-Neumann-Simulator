@@ -5,6 +5,9 @@
 
 void mul(Instruction *instruction);
 void movi(Instruction *instruction);
+void jeq(Instruction * instruction);
+void and (Instruction * instruction);
+
 
 
 #endif
