@@ -34,6 +34,8 @@ void populate_J(Instruction *instruction, int value);
 
 void execute(Instruction *instruction);
 
+void writeBack (int writeBackValue);
+
 
 
 
