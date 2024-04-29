@@ -10,6 +10,9 @@ void and (Instruction * instruction);
 
 void add(Instruction *instruction);
 void sub(Instruction *instruction);
+void lsr(Instruction *instruction);
+void movr(Instruction *instruction);
+void movm(Instruction *instruction);
 
 
 

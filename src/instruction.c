@@ -1,6 +1,8 @@
 #include "instruction.h"
 #include "register_set.h"
+#include "memory.h"
 #include "instruction_set.h"
+#include "BIT_MATH.h"
 
 /// @brief decode instruction
 /// @param instruction pointer to instruction struct
@@ -99,6 +101,9 @@ void populate_I(Instruction *instruction, int value)
     int r2 = (value >> 18) & 31;
     int immediate = value & 262143;
 
+    if(GET_BIT(immediate, 17))
+        immediate *= -1;
+
     instruction->r1 = r1;
     instruction->r2 = r2;
 
@@ -115,7 +120,14 @@ void populate_I(Instruction *instruction, int value)
 void populate_J(Instruction *instruction, int value)
 {
 
-    instruction->address = value & 268435455;
+    int address = value & 268435455;
+
+    
+
+    if(GET_BIT(address, 27))
+        address *= -1;
+
+    instruction->address = address;
 
     // clear other fields
     instruction->r1 = -1;
@@ -146,10 +158,25 @@ void execute(Instruction *instruction)
      else if(!strcmp(instr_type, "SUB"))
     {
         sub(instruction);
-    }   
+    }
+    else if (!strcmp(instr_type, "LSR"))
+    {
+        lsr(instruction);
+    }
+    else if (!strcmp(instr_type, "MOVR"))
+    {
+        movr(instruction);
+    }
+    else if (!strcmp(instr_type, "MOVM"))
+    {
+        movm(instruction)
+    }
     else
     {
         printf("Invalid Instruction\n");
     }
 }
+
+
+
 

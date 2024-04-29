@@ -9,6 +9,8 @@
 
 #define RSHIFT_REG(reg,no)     reg=(reg>>no)
 
+#define LOGI_RSHIFT_REG(reg,no) reg=((unsigned int)reg>>no)
+
 #define LSHIFT_REG(reg,no)     reg=(reg<<no)
 
 #define ASSIGN_REG(reg,value)  reg=value
