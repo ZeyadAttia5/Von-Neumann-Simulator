@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <assert.h>
 #include "register_set.h"
 #include "instruction.h"
@@ -113,9 +114,7 @@ int convertOpcodeStrToBin(char *opcodeStr)
     else if(strcmp(opcodeStr, "LSR") == 0) return 0b1001;
     else if(strcmp(opcodeStr, "MOVR") == 0) return 0b1010;
     else if(strcmp(opcodeStr, "MOVM") == 0) return 0b1011;
-
-    
-
+    else return -1;
    
 }
 
@@ -219,7 +218,7 @@ void readAssemblyFile(char* assemblyFilePath)
 
     char *line = NULL;
 
-    int len = 0;
+    size_t len = 0;
 
     ssize_t read;
 
@@ -254,6 +253,11 @@ int main()
     
     // create instruction
     Instruction instruction;
+
+    write_memory(TEST_MUL, 0);
+    int test_mul = read_memory(0);
+    printf("%d\n",test_mul);
+    printf("%d\n",TEST_MUL);
 
     // decode(&instruction, TEST_MOVI);
     decode(&instruction, TEST_MUL);

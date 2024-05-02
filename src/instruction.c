@@ -169,7 +169,7 @@ void execute(Instruction *instruction)
     }
     else if (!strcmp(instr_type, "MOVM"))
     {
-        movm(instruction)
+        movm(instruction);
     }
     else
     {
