@@ -6,6 +6,7 @@
 #include "register_set.h"
 #include "instruction.h"
 #include "memory.h"
+#include "test.h"
 
 
 //                -ADD-**1**--2--**3**
@@ -14,6 +15,8 @@
 //                 -ADD-**1**--2--**imm**
 #define TEST_MOVI 0b00110000100010001010000000000000
 
+
+int clock = 1;
 
 /**
  * Splits a string into an array of substrings based on a delimiter.
@@ -220,7 +223,7 @@ void readAssemblyFile(char* assemblyFilePath)
 
     char *line = NULL;
 
-    size_t len = 0;
+    int len = 0;
 
     ssize_t read;
 
@@ -241,34 +244,168 @@ void readAssemblyFile(char* assemblyFilePath)
 
 }
 
+
+
+int fetch()
+{
+    
+    int pcValue = read_register(32);
+
+    if (pcValue == 1024) return -1;
+
+    int instruction = read_memory(pcValue);
+
+
+    write_register(32, pcValue+1);
+
+    return instruction;
+
+
+}
+
+Instruction decode(int instructionBin)
+{
+
+    Instruction instruction;
+
+    decode_instruction(&instruction, instructionBin);
+
+    return instruction;
+
+
+}
+
+void execute(Instruction *instruction)
+{
+    
+    execute_instruction(instruction);
+
+}
+
+void writeBack(Instruction *instruction)
+{
+    if(instruction->opcode == 11) return;
+    
+    write_register(instruction->r1, instruction->result);
+}
+
+int memAccess(Instruction *instruction)
+{
+    if(instruction->opcode != 10 || instruction->opcode != 11) return -1;
+
+    if(instruction->opcode == 10) return read_memory(instruction->result);
+
+    int registerValue = read_register(instruction->r1);
+
+    write_memory(registerValue, instruction->result);
+}
+
+
+
+
+
+
 int main()
 {
     
 
+    // readAssemblyFile("assembly.txt");
 
-    // TESTING MUL instructions 4 * 3
-    
-    // populate registers 5 and 2
-    write_register(5, 4);
-    write_register(2, 3);
-    
-    
-    // create instruction
-    Instruction instruction;
+    initialize_memory();
 
-    // decode(&instruction, TEST_MOVI);
-    decode(&instruction, TEST_MUL);
-    execute(&instruction);
+    write_memory(test0, 0);
+    write_memory(test1, 1);
+    write_memory(test2, 2);
+    write_memory(test3, 3);
+    write_memory(test4, 4);
+    write_memory(test5, 5);
+    write_memory(test6, 6);
 
-    printf("Instruction type: %s\n", instruction.type);
-    printf("Instruction opcode: %d\n", instruction.opcode);
-    printf("Instruction R1: %d\n", instruction.r1);
-    printf("Instruction R2: %d\n", instruction.r2);
-    printf("Instruction R3: %d\n", instruction.r3);
-    printf("Instruction imm: %d\n", instruction.immediate);
-    printf("Instruction result: %d\n", instruction.result);    
-    // check if the result is stored in R1
-    printf("Register R1: %d\n", read_register(instruction.r1));
+
+    write_register(5, 5);
+    write_register(3, 3);
+    write_register(12, 12);
+    write_register(4, 4);
+    write_register(6, 6);
+    write_register(8, 8);
+    write_register(7, 7);
+    write_register(9, 9);
+    write_register(2, 2);
+    write_register(1, 1);
+    
+
+
+
+    int instructionBin = -1;
+
+    Instruction currInstruction, prevDecodedInstruction, prevExecutedInstruction;
+
+    int finishedFetching = 0;
+
+    int decodeEndClock = -1, executeEndClock = -1, memAccessEndClock = -1, writeBackEndClock = -1;
+
+    while(1)
+    {
+        
+        if(clock % 2 == 1) instructionBin = fetch();
+        
+        if (instructionBin == -1 && !finishedFetching)
+        {
+            finishedFetching = 1;
+            decodeEndClock = clock + 1;
+            executeEndClock = clock + 3;
+            memAccessEndClock = clock + 4;
+            writeBackEndClock = clock + 5;
+            printf("Decode End Clock: %d\n", decodeEndClock);
+            printf("Execute End Clock: %d\n", executeEndClock);
+            printf("Memory Access End Clock: %d\n", memAccessEndClock);
+            printf("Write Back End Clock: %d\n", writeBackEndClock);
+
+
+        }
+        
+        //Hi ya Amr 👋
+        if(clock % 2 == 0 && clock != decodeEndClock) 
+        { 
+            prevExecutedInstruction = prevDecodedInstruction;
+            prevDecodedInstruction = currInstruction;
+            currInstruction = decode(instructionBin);
+        }
+
+        if(clock % 2 == 0 && clock >= 6 && clock != memAccessEndClock)
+        {
+            
+            memAccess(&prevExecutedInstruction);
+        }
+
+        if(clock % 2 == 1 && clock >= 7 && clock != writeBackEndClock)
+        {
+            writeBack(&prevExecutedInstruction);
+        
+        }
+
+        if(clock % 2 == 1 && clock >= 5 && clock != executeEndClock)
+        {
+            
+            execute(&prevDecodedInstruction);
+
+        }
+       
+       
+        
+        if (writeBackEndClock == clock) break;
+        clock++;
+        
+        if (writeBackEndClock == clock) printf("ALI EL ZANY\n");
+
+    }
+
+    printf("Total Clock Cycles: %d\n", clock);
+    print_all_register_contents();
+    print_memory_contents();
+   
+
+    
 
 
     

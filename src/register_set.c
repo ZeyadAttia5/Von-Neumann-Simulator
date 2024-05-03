@@ -25,6 +25,7 @@ int read_register(int register_no)
     if (register_no < 0 || register_no > 32)
     {
         fprintf(stderr, "Invalid register number\n");
+        printf("Register number: %d\n", register_no);
         return -1;
     }
 
@@ -70,4 +71,13 @@ void write_register(int register_no, int write_value)
     {
         reg.reg[register_no] = write_value;
     }
+}
+
+void print_all_register_contents()
+{
+    for (int i = 0; i < 32; i++)
+    {
+        printf("R%d: %d\n", i, reg.reg[i]);
+    }
+    printf("PC: %d\n", reg.pc);
 }
