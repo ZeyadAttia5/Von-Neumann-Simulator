@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 #include "register_set.h"
 #include "instruction.h"
 #include "memory.h"
@@ -219,7 +220,7 @@ void readAssemblyFile(char* assemblyFilePath)
 
     char *line = NULL;
 
-    int len = 0;
+    size_t len = 0;
 
     ssize_t read;
 
