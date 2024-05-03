@@ -7,8 +7,7 @@
 /// @brief decode instruction
 /// @param instruction pointer to instruction struct
 /// @param reg value fetched from memory
-/// @return
-char *decode(Instruction *instruction, int reg)
+void decode_instruction(Instruction *instruction, int reg)
 {
 
     instruction->opcode = (reg >> 28) & 15;
@@ -105,6 +104,7 @@ void populate_I(Instruction *instruction, int value)
         immediate *= -1;
 
     instruction->r1 = r1;
+    
     instruction->r2 = r2;
 
     instruction->immediate = immediate;
@@ -139,7 +139,7 @@ void populate_J(Instruction *instruction, int value)
 
 /// @brief execute instruction
 /// @param instruction
-void execute(Instruction *instruction)
+void execute_instruction(Instruction *instruction)
 {
     char *instr_type = instruction->type;
 
@@ -171,8 +171,17 @@ void execute(Instruction *instruction)
     {
         movm(instruction);
     }
-    else
+    else if (!strcmp(instr_type, "AND"))
     {
+        and(instruction);
+    }
+    else if (!strcmp(instr_type, "JEQ"))
+    {
+        jeq(instruction);
+    }
+    else
+    {   
+        
         printf("Invalid Instruction\n");
     }
 }

@@ -14,7 +14,10 @@ static Memory mem;
 
 
 
-
+void initialize_memory()
+{
+    for(int i = 0; i < MAX_NUMBER_OF_ROWS; i++) mem.memory_block[i] = -1;
+}
 
 
 // Write data to the memory block at the specified address
@@ -45,6 +48,19 @@ int read_memory(int addr)
     {
         fprintf(stderr, "Error: Invalid memory access\n");
         return -2; // or handle error in a suitable way
+    }
+}
+
+/**
+ * Prints the contents of the memory.
+ * This function iterates over the memory blocks and prints the value of each block.
+ */
+void print_memory_contents()
+{
+    for(int i = 0; i < MAX_NUMBER_OF_ROWS; i++)
+    {
+        if(mem.memory_block[i] == -1) continue;
+        printf("Memory[%d] = %d\n", i, mem.memory_block[i]);
     }
 }
 

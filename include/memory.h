@@ -7,9 +7,11 @@
 #define MAX_NUMBER_OF_COLS 32
 #define MIN_NUMBER_OF_COLS 0
 
+void initialize_memory();
 
 int read_memory(int addr);
 void write_memory(int data, int addr);
+void print_memory_contents();
 
 void set_bit(int row, int col);
 void clr_bit(int row, int col);

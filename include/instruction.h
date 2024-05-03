@@ -23,7 +23,7 @@ typedef struct Instruction
     int result;
 } Instruction;
 
-char *decode(Instruction *instruction, int reg);
+void decode_instruction(Instruction *instruction, int reg);
 
 void populate_R(Instruction *instruction, int value);
 
@@ -32,9 +32,9 @@ void populate_I(Instruction *instruction, int value);
 void populate_J(Instruction *instruction, int value);
 
 
-void execute(Instruction *instruction);
+void execute_instruction(Instruction *instruction);
 
-void writeBack (int writeBackValue);
+
 
 
 
