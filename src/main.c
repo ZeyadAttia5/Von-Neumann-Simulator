@@ -160,9 +160,18 @@ void parseTokens(char** tokens, const int memoryAddress)
         token = trimwhitespace(*(tokens + 1));
             
 
-        // check if instruction is R or I format
+        
+        if (opcode == 3) // check if instruction is MOVI
+        {
+            int r1 = convertRegStrToInt(token);
+            instruction |= (r1 << 23);
+            int r2 = 0;
+            instruction |= (r2 << 18);
+            token = trimwhitespace(*(tokens + 2));
+            int immediate = atoi(token);
+            instruction |= immediate;
 
-        if (opcode != 7)
+        } else if (opcode != 7) // check if instruction is R or I format
         {
 
             int r1 = convertRegStrToInt(token);
@@ -174,7 +183,7 @@ void parseTokens(char** tokens, const int memoryAddress)
             instruction |= (r2 << 18);
             
             token = trimwhitespace(*(tokens + 3));
-            if (opcode == 3 || opcode == 4 || opcode == 6 || opcode == 10 || opcode == 11)
+            if (opcode == 4 || opcode == 6 || opcode == 10 || opcode == 11)
             {
                 int immediate = atoi(token);
                 instruction |= immediate;
@@ -219,7 +228,11 @@ void readAssemblyFile(char* assemblyFilePath)
 {
     // Open a file in read mode
     FILE *fptr = fopen(assemblyFilePath, "r");
-
+    if (fptr == NULL)
+    {
+        printf("Cannot open file \n");
+        exit(0);
+    }
     char *line = NULL;
 
     size_t len = 0;
@@ -230,9 +243,14 @@ void readAssemblyFile(char* assemblyFilePath)
 
     // Read the file line by line
     while ((read = getline(&line, &len, fptr)) != -1) 
-    {
+    {   
+       
+       if (line[0] == '\n') continue;
+
        // split line by space
        char** tokens = str_split(line, ' ');
+
+       
 
        // parse tokens
        parseTokens(tokens, memoryAddress);
@@ -307,18 +325,18 @@ int memAccess(Instruction *instruction)
 int main()
 {
     
-
-    // readAssemblyFile("assembly.txt");
-
     initialize_memory();
+    readAssemblyFile("assembly.txt");
 
-    write_memory(test0, 0);
-    write_memory(test1, 1);
-    write_memory(test2, 2);
-    write_memory(test3, 3);
-    write_memory(test4, 4);
-    write_memory(test5, 5);
-    write_memory(test6, 6);
+    
+
+    // write_memory(test0, 0);
+    // write_memory(test1, 1);
+    // write_memory(test2, 2);
+    // write_memory(test3, 3);
+    // write_memory(test4, 4);
+    // write_memory(test5, 5);
+    // write_memory(test6, 6);
 
 
     write_register(5, 5);
@@ -348,6 +366,7 @@ int main()
         
         if(clock % 2 == 1) instructionBin = fetch();
         
+        
         if (instructionBin == -1 && !finishedFetching)
         {
             finishedFetching = 1;
@@ -355,10 +374,7 @@ int main()
             executeEndClock = clock + 3;
             memAccessEndClock = clock + 4;
             writeBackEndClock = clock + 5;
-            printf("Decode End Clock: %d\n", decodeEndClock);
-            printf("Execute End Clock: %d\n", executeEndClock);
-            printf("Memory Access End Clock: %d\n", memAccessEndClock);
-            printf("Write Back End Clock: %d\n", writeBackEndClock);
+            
 
 
         }
@@ -371,6 +387,15 @@ int main()
             currInstruction = decode(instructionBin);
         }
 
+        
+
+        if(clock % 2 == 0 && clock >= 4 && clock != executeEndClock)
+        {
+            
+            execute(&prevDecodedInstruction);
+
+        }
+
         if(clock % 2 == 0 && clock >= 6 && clock != memAccessEndClock)
         {
             
@@ -381,13 +406,6 @@ int main()
         {
             writeBack(&prevExecutedInstruction);
         
-        }
-
-        if(clock % 2 == 1 && clock >= 5 && clock != executeEndClock)
-        {
-            
-            execute(&prevDecodedInstruction);
-
         }
        
        

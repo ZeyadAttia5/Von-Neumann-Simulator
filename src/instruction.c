@@ -182,7 +182,7 @@ void execute_instruction(Instruction *instruction)
     else
     {   
         
-        printf("Invalid Instruction\n");
+        printf("Invalid Instruction: %s\n", instr_type);
     }
 }
 
