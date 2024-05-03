@@ -392,14 +392,14 @@ int main()
        
        
         
-        if (writeBackEndClock == clock) break;
-        clock++;
         
+        clock++;
+        if (writeBackEndClock == clock) break;
         if (writeBackEndClock == clock) printf("ALI EL ZANY\n");
 
     }
 
-    printf("Total Clock Cycles: %d\n", clock);
+    printf("Total Clock Cycles: %d\n", --clock);
     print_all_register_contents();
     print_memory_contents();
    
