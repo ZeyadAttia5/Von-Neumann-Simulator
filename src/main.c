@@ -191,7 +191,7 @@ void parseTokens(char** tokens, const int memoryAddress)
             }
             else
             {
-                int r3 = convertRegStrToInt(token);
+                int r3 = (opcode == 8 | opcode == 9) ? 0 : convertRegStrToInt(token);
                 instruction |= (r3 << 13);
                 
                 token = trimwhitespace(*(tokens + 2));
