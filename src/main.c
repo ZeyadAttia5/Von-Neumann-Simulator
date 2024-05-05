@@ -272,6 +272,7 @@ int fetch()
 
     int instruction = read_memory(pcValue);
 
+    if (instruction == -1) return -1;
 
     write_register(32, pcValue+1);
 
@@ -356,6 +357,11 @@ int main()
     int instructionBin = -1;
 
     Instruction currInstruction, prevDecodedInstruction, prevExecutedInstruction;
+    currInstruction.empty = 1;
+    prevDecodedInstruction.empty = 1;
+    prevExecutedInstruction.empty = 1;
+
+    
 
     int finishedFetching = 0;
 
@@ -370,7 +376,7 @@ int main()
         if (instructionBin == -1 && !finishedFetching)
         {
             finishedFetching = 1;
-            decodeEndClock = clock + 1;
+            decodeEndClock = clock + 2;
             executeEndClock = clock + 3;
             memAccessEndClock = clock + 4;
             writeBackEndClock = clock + 5;
@@ -385,6 +391,9 @@ int main()
             prevExecutedInstruction = prevDecodedInstruction;
             prevDecodedInstruction = currInstruction;
             currInstruction = decode(instructionBin);
+            
+            
+            
         }
 
         
@@ -393,6 +402,8 @@ int main()
         {
             
             execute(&prevDecodedInstruction);
+            
+            
 
         }
 
@@ -404,6 +415,7 @@ int main()
 
         if(clock % 2 == 1 && clock >= 7 && clock != writeBackEndClock)
         {
+            
             writeBack(&prevExecutedInstruction);
         
         }
