@@ -103,7 +103,7 @@ void populate_I(Instruction *instruction, int value)
     if(GET_BIT(immediate, 17))
         immediate *= -1;
 
-    instruction->r1 = r1;
+    instruction->r3 = r1;
     
     instruction->r2 = r2;
 
@@ -112,6 +112,7 @@ void populate_I(Instruction *instruction, int value)
     // clear other fields
     instruction->address = -1;
     instruction->shamt = -1;
+    instruction->r1 = -1;
 }
 
 /// @brief Instruction J Format: Opcode(4) | Address(28)
