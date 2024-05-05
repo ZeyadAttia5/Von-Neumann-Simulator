@@ -357,9 +357,7 @@ int main()
     int instructionBin = -1;
 
     Instruction currInstruction, prevDecodedInstruction, prevExecutedInstruction;
-    currInstruction.empty = 1;
-    prevDecodedInstruction.empty = 1;
-    prevExecutedInstruction.empty = 1;
+    
 
     
 
