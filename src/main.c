@@ -130,7 +130,7 @@ int convertOpcodeStrToBin(char *opcodeStr)
  */
 int convertRegStrToInt(char *regStr)
 {
-    if(strcmp(regStr, "PC") == 0) return 33;
+    if(strcmp(regStr, "PC") == 0) return 32;
     
     int regNo = atoi(regStr + 1);
     
@@ -149,6 +149,8 @@ void parseTokens(char** tokens, const int memoryAddress)
     if (tokens)
     {
         
+
+        
         int instruction = 0;
          
         
@@ -163,6 +165,7 @@ void parseTokens(char** tokens, const int memoryAddress)
         
         if (opcode == 3) // check if instruction is MOVI
         {
+            
             int r1 = convertRegStrToInt(token);
             instruction |= (r1 << 23);
             int r2 = 0;
@@ -171,7 +174,8 @@ void parseTokens(char** tokens, const int memoryAddress)
             int immediate = atoi(token);
             instruction |= immediate;
 
-        } else if (opcode != 7) // check if instruction is R or I format
+        } 
+        else if (opcode != 7) // check if instruction is R or I format
         {
 
             int r1 = convertRegStrToInt(token);
@@ -268,7 +272,7 @@ int fetch()
     
     int pcValue = read_register(32);
 
-    if (pcValue == 1024) return -1;
+    if (pcValue >= 1024) return -1;
 
     int instruction = read_memory(pcValue);
 
@@ -340,16 +344,16 @@ int main()
     // write_memory(test6, 6);
 
 
-    write_register(5, 5);
-    write_register(3, 3);
-    write_register(12, 12);
-    write_register(4, 4);
-    write_register(6, 6);
-    write_register(8, 8);
-    write_register(7, 7);
-    write_register(9, 9);
-    write_register(2, 2);
-    write_register(1, 1);
+    // write_register(5, 5);
+    // write_register(3, 3);
+    // write_register(12, 12);
+    // write_register(4, 4);
+    // write_register(6, 6);
+    // write_register(8, 8);
+    // write_register(7, 7);
+    // write_register(9, 9);
+    // write_register(2, 2);
+    // write_register(1, 1);
     
 
 
@@ -394,17 +398,6 @@ int main()
             
         }
 
-        
-
-        if(clock % 2 == 0 && clock >= 4 && clock != executeEndClock)
-        {
-            
-            execute(&prevDecodedInstruction);
-            
-            
-
-        }
-
         if(clock % 2 == 0 && clock >= 6 && clock != memAccessEndClock)
         {
             
@@ -417,6 +410,19 @@ int main()
             writeBack(&prevExecutedInstruction);
         
         }
+
+        
+
+        if(clock % 2 == 1 && clock >= 5 && clock != executeEndClock)
+        {
+            
+            execute(&prevDecodedInstruction);
+            
+            
+
+        }
+
+        
        
        
         

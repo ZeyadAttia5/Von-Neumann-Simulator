@@ -14,8 +14,8 @@ void movi(Instruction *instruction)
 
 void jeq (Instruction * instruction)
 {
-    if((read_register(instruction->r2) - read_register(instruction->r3))==0){
-        instruction->r1 = 32;
+    if((read_register(instruction->r2) - read_register(instruction->r1))==0){
+        instruction->r1 = (unsigned char)(32 & 0x1F);
         instruction->result = read_register(32)+1+instruction->immediate;
     }
 }
@@ -27,6 +27,7 @@ void and (Instruction * instruction)
 
 void add(Instruction *instruction)
 {
+    printf("R2: %d\n", read_register(instruction->r2));
     instruction->result = read_register(instruction->r2) + read_register(instruction->r3);
 }
 void sub(Instruction *instruction)

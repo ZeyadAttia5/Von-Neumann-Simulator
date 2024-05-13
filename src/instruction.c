@@ -6,11 +6,11 @@
 
 /// @brief decode instruction
 /// @param instruction pointer to instruction struct
-/// @param reg value fetched from memory
-void decode_instruction(Instruction *instruction, int reg)
+/// @param instruction_value value fetched from memory
+void decode_instruction(Instruction *instruction, int instruction_value)
 {
 
-    instruction->opcode = (reg >> 28) & 15;
+    instruction->opcode = (instruction_value >> 28) & 15;
     switch (instruction->opcode)
     {
     case 0b0000:
@@ -55,30 +55,34 @@ void decode_instruction(Instruction *instruction, int reg)
     }
 
     char *instr_type = instruction->type;
+
     if (!strcmp(instr_type, "ADD") || !strcmp(instr_type, "SUB") || !strcmp(instr_type, "MUL") || !strcmp(instr_type, "AND") || !strcmp(instr_type, "LSL") || !strcmp(instr_type, "LSL"))
     {
-        populate_R(instruction, reg);
+        populate_R(instruction, instruction_value);
     }
     else if (!strcmp(instr_type, "JMP"))
     {
-        populate_J(instruction, reg);
+        populate_J(instruction, instruction_value);
     }
     else
     {
-        populate_I(instruction, reg);
+        populate_I(instruction, instruction_value);
     }
+
+   
+
 }
 
 /// @brief Instruction R Format: Opcode(4) | R1(5) | R2(5) | R3(5) | Shamt(13)
 /// @param instruction
-/// @param value
-void populate_R(Instruction *instruction, int value)
+/// @param instruction_value
+void populate_R(Instruction *instruction, int instruction_value)
 {
 
-    char r1 = (value >> 23) & 31;
-    char r2 = (value >> 18) & 31;
-    char r3 = (value >> 13) & 31;
-    int shamt = value & 8191;
+    char r1 = (instruction_value >> 23) & 31;
+    char r2 = (instruction_value >> 18) & 31;
+    char r3 = (instruction_value >> 13) & 31;
+    int shamt = instruction_value & 8191;
 
     instruction->r1 = r1;
     instruction->r2 = r2;
@@ -92,18 +96,19 @@ void populate_R(Instruction *instruction, int value)
 
 /// @brief Instruction I Format: Opcode(4) | R1(5) | R2(5) | Immediate(18)
 /// @param instruction
-/// @param value
-void populate_I(Instruction *instruction, int value)
+/// @param instruction_value
+void populate_I(Instruction *instruction, int instruction_value)
 {
 
-    int r1 = (value >> 23) & 31;
-    int r2 = (value >> 18) & 31;
-    int immediate = value & 262143;
+    int r1 = (instruction_value >> 23) & 31;
+    
+    int r2 = (instruction_value >> 18) & 31;
+    int immediate = instruction_value & 262143;
 
     if(GET_BIT(immediate, 17))
         immediate *= -1;
 
-    instruction->r3 = r1;
+    instruction->r1 = r1;
     
     instruction->r2 = r2;
 
@@ -112,16 +117,16 @@ void populate_I(Instruction *instruction, int value)
     // clear other fields
     instruction->address = -1;
     instruction->shamt = -1;
-    instruction->r1 = -1;
+    instruction->r3 = -1;
 }
 
 /// @brief Instruction J Format: Opcode(4) | Address(28)
 /// @param instruction
-/// @param value
-void populate_J(Instruction *instruction, int value)
+/// @param instruction_value
+void populate_J(Instruction *instruction, int instruction_value)
 {
 
-    int address = value & 268435455;
+    int address = instruction_value & 268435455;
 
     
 
