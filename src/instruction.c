@@ -11,6 +11,7 @@ void decode_instruction(Instruction *instruction, int instruction_value)
 {
 
     instruction->opcode = (instruction_value >> 28) & 15;
+    
     switch (instruction->opcode)
     {
     case 0b0000:
@@ -106,7 +107,9 @@ void populate_I(Instruction *instruction, int instruction_value)
     int immediate = instruction_value & 262143;
 
     if(GET_BIT(immediate, 17))
-        immediate *= -1;
+        immediate = immediate | 0xFFFC0000;
+
+    
 
     instruction->r1 = r1;
     

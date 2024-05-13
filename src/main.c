@@ -190,7 +190,17 @@ void parseTokens(char** tokens, const int memoryAddress)
             if (opcode == 4 || opcode == 6 || opcode == 10 || opcode == 11)
             {
                 int immediate = atoi(token);
+                if (immediate < 0)
+                {
+                    // convert negative immediate to 2's complement in 18 bits
+                    immediate = (1 << 18) + immediate;
+
+
+                    
+                    
+                }
                 instruction |= immediate;
+                
                 
             }
             else
@@ -277,6 +287,7 @@ int fetch()
     int instruction = read_memory(pcValue);
 
     if (instruction == -1) return -1;
+    printf("PC VALUE: %d\n", pcValue);
 
     write_register(32, pcValue+1);
 
