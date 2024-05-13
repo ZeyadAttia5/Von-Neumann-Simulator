@@ -12,9 +12,10 @@ void movi(Instruction *instruction)
     instruction->result = instruction->immediate;
 }
 
-void jeq (Instruction * instruction)
+void jeq(Instruction *instruction)
 {
-    if((read_register(instruction->r2) - read_register(instruction->r3))==0){
+    if ((read_register(instruction->r2) - read_register(instruction->r3)) == 0)
+    {
         instruction->r1 = 32;
         instruction->result = read_register(PC) + 1 + instruction->immediate;
     }
@@ -35,14 +36,14 @@ void sub(Instruction *instruction)
 }
 void lsr(Instruction *instruction)
 {
-    instruction->result = LOGI_RSHIFT_REG(instruction->r2,instruction->shamt);
+    instruction->result = LOGI_RSHIFT_REG(instruction->r2, instruction->shamt);
 }
 
 void movr(Instruction *instruction)
 {
 
     instruction->result = instruction->r2 + instruction->immediate;
-    
+
     // must wait for memory in instruction cycle
 }
 
