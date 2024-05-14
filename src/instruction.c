@@ -196,6 +196,18 @@ void execute_instruction(Instruction *instruction)
     {
         jeq(instruction);
     }
+    else if (!strcmp(instr_type, "JMP"))
+    {
+        jmp(instruction);
+    }
+    else if (!strcmp(instr_type, "XORI"))
+    {
+        xori(instruction);
+    }
+    else if (!strcmp(instr_type, "LSL"))
+    {
+        lsl(instruction);
+    }
     else
     {   
         

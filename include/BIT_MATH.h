@@ -7,11 +7,11 @@
 
 #define GET_BIT(reg,bitno)    ( (reg>>bitno) & 1)
 
-#define RSHIFT_REG(reg,no)     reg=(reg>>no)
-
-#define LOGI_RSHIFT_REG(reg,no) reg=((unsigned int)reg>>no)
+#define ARITH_RSHIFT_REG(reg,no)     reg=(reg>>no)
 
 #define LSHIFT_REG(reg,no)     reg=(reg<<no)
+
+#define LOGI_RSHIFT_REG(reg,no) reg=((unsigned int)reg>>no)
 
 #define ASSIGN_REG(reg,value)  reg=value
 
