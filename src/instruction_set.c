@@ -4,7 +4,7 @@
 
 void mul(Instruction *instruction)
 {
-    instruction->result = read_register(instruction->r2) * read_register(instruction->r3);
+    instruction->result = instruction->r2 * instruction->r3;
 }
 
 void movi(Instruction *instruction)
@@ -14,27 +14,26 @@ void movi(Instruction *instruction)
 
 void jeq(Instruction *instruction)
 {
-    if ((read_register(instruction->r2) - read_register(instruction->r3)) == 0)
-    {
-        instruction->r1 = 32;
-      
-        instruction->result = read_register(PC) + 1 + instruction->immediate;
-
+    
+    if((instruction->r2 - instruction->r1) == 0){
+        instruction->r1 = (unsigned char)(32 & 0x20);
+        instruction->result = instruction->pc+instruction->immediate;
     }
 }
 
 void and (Instruction * instruction)
 {
-    instruction->result = read_register(instruction->r2) & read_register(instruction->r3);
+    instruction->result = instruction->r2 & instruction->r3;
 }
 
 void add(Instruction *instruction)
 {
-    instruction->result = read_register(instruction->r2) + read_register(instruction->r3);
+    
+    instruction->result = instruction->r2 + instruction->r3;
 }
 void sub(Instruction *instruction)
 {
-    instruction->result = read_register(instruction->r2) - read_register(instruction->r3);
+    instruction->result = instruction->r2 - instruction->r3;
 }
 
 void lsr(Instruction *instruction)
