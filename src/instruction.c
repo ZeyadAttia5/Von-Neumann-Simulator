@@ -69,6 +69,7 @@ void decode_instruction(Instruction *instruction, int instruction_value)
     {
         populate_I(instruction, instruction_value);
     }
+    
 
    
 
@@ -81,8 +82,8 @@ void populate_R(Instruction *instruction, int instruction_value)
 {
 
     char r1 = (instruction_value >> 23) & 31;
-    char r2 = (instruction_value >> 18) & 31;
-    char r3 = (instruction_value >> 13) & 31;
+    char r2 = read_register((instruction_value >> 18) & 31);
+    char r3 = read_register((instruction_value >> 13) & 31);
     int shamt = instruction_value & 8191;
 
     instruction->r1 = r1;
@@ -100,12 +101,19 @@ void populate_R(Instruction *instruction, int instruction_value)
 /// @param instruction_value
 void populate_I(Instruction *instruction, int instruction_value)
 {
+    int r1;
 
-    int r1 = (instruction_value >> 23) & 31;
+    if (instruction->opcode == 4 || instruction->opcode == 11) // If instruction is JEQ or MOVM then R1 is not a destination register
+        r1 = read_register((instruction_value >> 23) & 31);
+    else 
+        r1 = (instruction_value >> 23) & 31;
+        
     
-    int r2 = (instruction_value >> 18) & 31;
+    int r2 = read_register((instruction_value >> 18) & 31);
+
     int immediate = instruction_value & 262143;
 
+    // check if immediate valiue is negative
     if(GET_BIT(immediate, 17))
         immediate = immediate | 0xFFFC0000;
 

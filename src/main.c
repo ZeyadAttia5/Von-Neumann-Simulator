@@ -287,7 +287,8 @@ int fetch()
     int instruction = read_memory(pcValue);
 
     if (instruction == -1) return -1;
-    printf("PC VALUE: %d\n", pcValue);
+    printf("PC VALUE: %d, CLK: %d, R1: %d\n", pcValue, clock, (instruction >> 23) & 31);
+    
 
     write_register(32, pcValue+1);
 
@@ -302,6 +303,8 @@ Instruction decode(int instructionBin)
     Instruction instruction;
 
     decode_instruction(&instruction, instructionBin);
+
+    instruction.pc = read_register(32) - 1;
 
     return instruction;
 
@@ -325,10 +328,10 @@ void writeBack(Instruction *instruction)
 int memAccess(Instruction *instruction)
 {
     if(instruction->opcode != 10 || instruction->opcode != 11) return -1;
-
+    
     if(instruction->opcode == 10) return read_memory(instruction->result);
 
-    int registerValue = read_register(instruction->r1);
+    int registerValue = instruction->r1;
 
     write_memory(registerValue, instruction->result);
 }
@@ -376,7 +379,7 @@ int main()
 
     
 
-    int finishedFetching = 0;
+    int finishedFetching = 0, flush = 0;
 
     int decodeEndClock = -1, executeEndClock = -1, memAccessEndClock = -1, writeBackEndClock = -1;
 
@@ -417,6 +420,11 @@ int main()
 
         if(clock % 2 == 1 && clock >= 7 && clock != writeBackEndClock)
         {
+            if(flush)
+            {
+                instructionBin = 0;
+                flush = 0;
+            }
             
             writeBack(&prevExecutedInstruction);
         
@@ -427,7 +435,21 @@ int main()
         if(clock % 2 == 1 && clock >= 5 && clock != executeEndClock)
         {
             
+            if(prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0)
+            {
+                instructionBin = 0;
+                currInstruction.opcode = 0;
+                currInstruction.r1 = 0;
+                currInstruction.r2 = 0;
+                currInstruction.r3 = 0;
+                currInstruction.result = 0;
+                flush = 1;
+
+            }
+
             execute(&prevDecodedInstruction);
+
+            
             
             
 

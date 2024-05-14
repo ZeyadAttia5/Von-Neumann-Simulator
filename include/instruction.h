@@ -12,14 +12,14 @@ typedef struct Instruction
 {
 
     char opcode : 4;
-    unsigned char r1 : 5;
-    unsigned char r2 : 5;
-    unsigned char r3 : 5;
+    int r1;
+    int r2;
+    int r3;
     int shamt : 13;
     int address : 28;
     int immediate : 18;
     char *type;
-
+    int pc;
     int result;
 } Instruction;
 
