@@ -21,17 +21,17 @@ void data_hazard(Instruction* curr_instruction, Instruction* prev_decoded, Instr
         }
         
         
-        if (curr_instruction->r3 == prev_decoded->r1)
+        if (curr_instruction->r3_addr == prev_decoded->r1_addr)
         {   
             curr_instruction->r3 = prev_decoded->result;
         }
 
-        if (curr_instruction->r2 == prev_executed->r1 )
+        if (curr_instruction->r2_addr == prev_executed->r1_addr )
         {
             curr_instruction->r2 = prev_executed->result;
         }
 
-        if (curr_instruction->r2 == prev_decoded->r1)
+        if (curr_instruction->r2_addr == prev_decoded->r1_addr)
         {
             curr_instruction->r2 = prev_decoded->result;
         }

@@ -273,7 +273,7 @@ void writeBack(Instruction *instruction)
     if (instruction->opcode == 11)
         return;
 
-    write_register(instruction->r1, instruction->result);
+    write_register(instruction->r1_addr, instruction->result);
 }
 
 int memAccess(Instruction *instruction)
