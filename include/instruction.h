@@ -15,6 +15,9 @@ typedef struct Instruction
     int r1;
     int r2;
     int r3;
+    int r1_addr;
+    int r2_addr;
+    int r3_addr;
     int shamt : 13;
     int address : 28;
     int immediate : 18;

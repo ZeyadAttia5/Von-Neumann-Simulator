@@ -14,7 +14,9 @@ void lsr(Instruction *instruction);
 void movr(Instruction *instruction);
 void movm(Instruction *instruction);
 
-
+void xori(Instruction *instruction);
+void lsl(Instruction *instruction);
+void jmp(Instruction *instruction);
 
 
 #endif

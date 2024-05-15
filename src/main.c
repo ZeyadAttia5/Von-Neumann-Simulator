@@ -8,6 +8,7 @@
 #include "instruction.h"
 #include "memory.h"
 #include "test.h"
+#include "data_hazard_block.h"
 
 //                -ADD-**1**--2--**3**
 #define TEST_MUL 0b00100000100010001010000000000000
@@ -15,6 +16,8 @@
 //                 -ADD-**1**--2--**imm**
 #define TEST_MOVI 0b00110000100010001010000000000000
 
+
+Instruction currInstruction, prevDecodedInstruction, prevExecutedInstruction;
 int clock = 1;
 
 /**
@@ -142,8 +145,9 @@ int convertOpcodeStrToBin(char *opcodeStr)
  */
 int convertRegStrToInt(char *regStr)
 {
-    if(strcmp(regStr, "PC") == 0) return 32;
-    
+    if (strcmp(regStr, "PC") == 0)
+        return 32;
+
     int regNo = atoi(regStr + 1);
 
     return regNo;
@@ -160,9 +164,7 @@ void parseTokens(char **tokens, const int memoryAddress)
 {
     if (tokens)
     {
-        
 
-        
         int instruction = 0;
 
         char *token = trimwhitespace(*(tokens));
@@ -174,7 +176,7 @@ void parseTokens(char **tokens, const int memoryAddress)
 
         if (opcode == 3) // check if instruction is MOVI
         {
-            
+
             int r1 = convertRegStrToInt(token);
             instruction |= (r1 << 23);
             int r2 = 0;
@@ -182,8 +184,7 @@ void parseTokens(char **tokens, const int memoryAddress)
             token = trimwhitespace(*(tokens + 2));
             int immediate = atoi(token);
             instruction |= immediate;
-
-        } 
+        }
         else if (opcode != 7) // check if instruction is R or I format
         {
 
@@ -202,14 +203,8 @@ void parseTokens(char **tokens, const int memoryAddress)
                 {
                     // convert negative immediate to 2's complement in 18 bits
                     immediate = (1 << 18) + immediate;
-
-
-                    
-                    
                 }
                 instruction |= immediate;
-                
-                
             }
             else
             {
@@ -273,44 +268,6 @@ void readAssemblyFile(char *assemblyFilePath)
     }
 }
 
-int fetch()
-{
-
-    int pcValue = read_register(32);
-
-    if (pcValue >= 1024) return -1;
-
-    int instruction = read_memory(pcValue);
-
-    if (instruction == -1) return -1;
-    printf("PC VALUE: %d, CLK: %d, R1: %d\n", pcValue, clock, (instruction >> 23) & 31);
-    
-
-    write_register(32, pcValue+1);
-
-    return instruction;
-}
-
-Instruction decode(int instructionBin)
-{
-
-    Instruction instruction;
-
-    decode_instruction(&instruction, instructionBin);
-
-    
-
-    instruction.pc = read_register(32) - 1;
-
-    return instruction;
-}
-
-void execute(Instruction *instruction)
-{
-
-    execute_instruction(instruction);
-}
-
 void writeBack(Instruction *instruction)
 {
     if (instruction->opcode == 11)
@@ -321,13 +278,53 @@ void writeBack(Instruction *instruction)
 
 int memAccess(Instruction *instruction)
 {
-    if(instruction->opcode != 10 || instruction->opcode != 11) return -1;
-    
-    if(instruction->opcode == 10) return read_memory(instruction->result);
+    if (instruction->opcode != 10 || instruction->opcode != 11)
+        return -1;
+
+    if (instruction->opcode == 10)
+        return read_memory(instruction->result);
 
     int registerValue = instruction->r1;
 
     write_memory(registerValue, instruction->result);
+}
+
+void execute(Instruction *instruction)
+{
+    data_hazard(&currInstruction, &prevDecodedInstruction, &prevExecutedInstruction);
+
+    execute_instruction(instruction);
+}
+
+Instruction decode(int instructionBin)
+{
+
+    Instruction instruction;
+
+    decode_instruction(&instruction, instructionBin);
+
+    instruction.pc = read_register(32) - 1;
+
+    return instruction;
+}
+
+int fetch()
+{
+
+    int pcValue = read_register(32);
+
+    if (pcValue >= 1024)
+        return -1;
+
+    int instruction = read_memory(pcValue);
+
+    if (instruction == -1)
+        return -1;
+    printf("PC VALUE: %d, CLK: %d, R1: %d\n", pcValue, clock, (instruction >> 23) & 31);
+
+    write_register(32, pcValue + 1);
+
+    return instruction;
 }
 
 int main()
@@ -344,7 +341,6 @@ int main()
     // write_memory(test5, 5);
     // write_memory(test6, 6);
 
-
     // write_register(5, 5);
     // write_register(3, 3);
     // write_register(12, 12);
@@ -355,16 +351,8 @@ int main()
     // write_register(9, 9);
     // write_register(2, 2);
     // write_register(1, 1);
-    
-
-
 
     int instructionBin = -1;
-
-    Instruction currInstruction, prevDecodedInstruction, prevExecutedInstruction;
-    
-
-    
 
     int finishedFetching = 0, flush = 0;
 
@@ -391,12 +379,9 @@ int main()
             prevExecutedInstruction = prevDecodedInstruction;
             prevDecodedInstruction = currInstruction;
             currInstruction = decode(instructionBin);
-            
-            
-            
         }
 
-        if(clock % 2 == 0 && clock >= 6 && clock != memAccessEndClock)
+        if (clock % 2 == 0 && clock >= 6 && clock != memAccessEndClock)
         {
 
             memAccess(&prevExecutedInstruction);
@@ -404,22 +389,19 @@ int main()
 
         if (clock % 2 == 1 && clock >= 7 && clock != writeBackEndClock)
         {
-            if(flush)
+            if (flush)
             {
                 instructionBin = 0;
                 flush = 0;
             }
-            
+
             writeBack(&prevExecutedInstruction);
-        
         }
 
-        
-
-        if(clock % 2 == 1 && clock >= 5 && clock != executeEndClock)
+        if (clock % 2 == 1 && clock >= 5 && clock != executeEndClock)
         {
-            
-            if(prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0)
+
+            if (prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0)
             {
                 instructionBin = 0;
                 currInstruction.opcode = 0;
@@ -428,22 +410,11 @@ int main()
                 currInstruction.r3 = 0;
                 currInstruction.result = 0;
                 flush = 1;
-
             }
 
             execute(&prevDecodedInstruction);
-
-            
-            
-            
-
         }
 
-        
-       
-       
-        
-        
         clock++;
         if (writeBackEndClock == clock)
             break;

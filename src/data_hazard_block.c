@@ -14,13 +14,13 @@ void data_hazard(Instruction* curr_instruction, Instruction* prev_decoded, Instr
     else
     {
 
-                                            // R30
-        if (curr_instruction->r3 == prev_executed->r1)
+        
+        if (curr_instruction->r3_addr == prev_executed->r1_addr)
         {   
             curr_instruction->r3 = prev_executed->result;
         }
         
-                                            // R30
+        
         if (curr_instruction->r3 == prev_decoded->r1)
         {   
             curr_instruction->r3 = prev_decoded->result;

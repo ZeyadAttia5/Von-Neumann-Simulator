@@ -60,12 +60,12 @@ void movm(Instruction *instruction)
 // Function to perform XOR immediate operation
 void xori(Instruction *instruction)
 {
-    instruction->result = read_register(instruction->r2) ^ instruction->immediate;
+    instruction->result = instruction->r2 ^ instruction->immediate;
 }
 
 void lsl(Instruction *instruction)
 {
-    instruction->result = read_register(instruction->r2) << instruction->shamt;
+    instruction->result = instruction->r2 << instruction->shamt;
 }
 
 void jmp(Instruction *instruction)

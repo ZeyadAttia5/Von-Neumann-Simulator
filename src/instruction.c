@@ -11,7 +11,7 @@ void decode_instruction(Instruction *instruction, int instruction_value)
 {
 
     instruction->opcode = (instruction_value >> 28) & 15;
-    
+
     switch (instruction->opcode)
     {
     case 0b0000:
@@ -69,10 +69,6 @@ void decode_instruction(Instruction *instruction, int instruction_value)
     {
         populate_I(instruction, instruction_value);
     }
-    
-
-   
-
 }
 
 /// @brief Instruction R Format: Opcode(4) | R1(5) | R2(5) | R3(5) | Shamt(13)
@@ -82,13 +78,21 @@ void populate_R(Instruction *instruction, int instruction_value)
 {
 
     char r1 = (instruction_value >> 23) & 31;
-    char r2 = read_register((instruction_value >> 18) & 31);
-    char r3 = read_register((instruction_value >> 13) & 31);
+    int r2 = read_register((instruction_value >> 18) & 31);
+    int r3 = read_register((instruction_value >> 13) & 31);
+
+    char r1_addr = (instruction_value >> 23) & 31;
+    char r2_addr = ((instruction_value >> 18) & 31);
+    char r3_addr = ((instruction_value >> 13) & 31);
     int shamt = instruction_value & 8191;
 
     instruction->r1 = r1;
     instruction->r2 = r2;
     instruction->r3 = r3;
+
+    instruction->r1_addr = r1_addr;
+    instruction->r2_addr = r2_addr;
+    instruction->r3_addr = r3_addr;
     instruction->shamt = shamt;
 
     // clear other fields
@@ -101,27 +105,27 @@ void populate_R(Instruction *instruction, int instruction_value)
 /// @param instruction_value
 void populate_I(Instruction *instruction, int instruction_value)
 {
-    int r1;
+    int r1 = read_register((instruction_value >> 23) & 31);
 
-    if (instruction->opcode == 4 || instruction->opcode == 11) // If instruction is JEQ or MOVM then R1 is not a destination register
-        r1 = read_register((instruction_value >> 23) & 31);
-    else 
-        r1 = (instruction_value >> 23) & 31;
-        
-    
+    int r1_addr = (instruction_value >> 23) & 31;
+
     int r2 = read_register((instruction_value >> 18) & 31);
+
+    int r2_addr = ((instruction_value >> 18) & 31);
 
     int immediate = instruction_value & 262143;
 
     // check if immediate valiue is negative
-    if(GET_BIT(immediate, 17))
+    if (GET_BIT(immediate, 17))
         immediate = immediate | 0xFFFC0000;
 
-    
-
     instruction->r1 = r1;
-    
+
     instruction->r2 = r2;
+
+    instruction->r1_addr = r1_addr;
+
+    instruction->r2_addr = r2_addr;
 
     instruction->immediate = immediate;
 
@@ -139,9 +143,7 @@ void populate_J(Instruction *instruction, int instruction_value)
 
     int address = instruction_value & 268435455;
 
-    
-
-    if(GET_BIT(address, 27))
+    if (GET_BIT(address, 27))
         address *= -1;
 
     instruction->address = address;
@@ -150,6 +152,9 @@ void populate_J(Instruction *instruction, int instruction_value)
     instruction->r1 = -1;
     instruction->r2 = -1;
     instruction->r3 = -1;
+    instruction->r1_addr = -1;
+    instruction->r2_addr = -1;
+    instruction->r3_addr = -1;
     instruction->shamt = -1;
     instruction->immediate = -1;
 }
@@ -168,11 +173,11 @@ void execute_instruction(Instruction *instruction)
     {
         movi(instruction);
     }
-    else if(!strcmp(instr_type, "ADD"))
+    else if (!strcmp(instr_type, "ADD"))
     {
         add(instruction);
     }
-     else if(!strcmp(instr_type, "SUB"))
+    else if (!strcmp(instr_type, "SUB"))
     {
         sub(instruction);
     }
@@ -209,12 +214,8 @@ void execute_instruction(Instruction *instruction)
         lsl(instruction);
     }
     else
-    {   
-        
+    {
+
         printf("Invalid Instruction: %s\n", instr_type);
     }
 }
-
-
-
-
