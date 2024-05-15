@@ -298,6 +298,8 @@ Instruction decode(int instructionBin)
 
     decode_instruction(&instruction, instructionBin);
 
+    
+
     instruction.pc = read_register(32) - 1;
 
     return instruction;
