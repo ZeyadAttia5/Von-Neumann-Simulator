@@ -11,7 +11,7 @@
 typedef struct Instruction
 {
 
-    char opcode : 4;
+    unsigned char opcode : 4;
     int r1;
     int r2;
     int r3;

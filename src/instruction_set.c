@@ -9,14 +9,18 @@ void mul(Instruction *instruction)
 
 void movi(Instruction *instruction)
 {
-    instruction->result = instruction->immediate;
+    if (instruction->r1_addr == 0)
+        instruction->result = 0;
+    else
+        instruction->result = instruction->immediate;
+
 }
 
 void jeq(Instruction *instruction)
 {
     
     if((instruction->r2 - instruction->r1) == 0){
-        instruction->r1 = (unsigned char)(32 & 0x20);
+        instruction->r1_addr = PC;
         instruction->result = instruction->pc+instruction->immediate;
     }
 }
@@ -73,10 +77,12 @@ void jmp(Instruction *instruction)
     // PC = PC|31:28| concatenated with address|27:0|
 
     // copy the first 4 bits of PC to the first 4 bits of the result
-    int result = read_register(PC) & 0xF0000000;
+    int result = instruction->pc & 0xF0000000;
 
     // copy the last 28 bits of the address to the last 28 bits of the result
     result |= instruction->address & 0x0FFFFFFF;
+
+    instruction->r1_addr = PC;
 
     // save the result in the instruction
     instruction->result = result;

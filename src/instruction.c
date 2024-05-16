@@ -10,7 +10,7 @@
 void decode_instruction(Instruction *instruction, int instruction_value)
 {
 
-    instruction->opcode = (instruction_value >> 28) & 15;
+    instruction->opcode = (((unsigned int) instruction_value) >> 28) & 0xF;
 
     switch (instruction->opcode)
     {
@@ -47,7 +47,7 @@ void decode_instruction(Instruction *instruction, int instruction_value)
     case 0b1010:
         instruction->type = "MOVR";
         break;
-    case 0b1011:
+    case 11:
         instruction->type = "MOVM";
         break;
     default:
@@ -129,6 +129,10 @@ void populate_I(Instruction *instruction, int instruction_value)
 
     instruction->immediate = immediate;
 
+    if (!strcmp(instruction->type, "MOVI")) {
+        instruction->result = immediate;
+        instruction->r2_addr = 0;
+    }
     // clear other fields
     instruction->address = -1;
     instruction->shamt = -1;

@@ -278,7 +278,7 @@ void writeBack(Instruction *instruction)
 
 int memAccess(Instruction *instruction)
 {
-    if (instruction->opcode != 10 || instruction->opcode != 11)
+    if (instruction->opcode != 10 && instruction->opcode != 11)
         return -1;
 
     if (instruction->opcode == 10)
@@ -287,13 +287,16 @@ int memAccess(Instruction *instruction)
     int registerValue = instruction->r1;
 
     write_memory(registerValue, instruction->result);
+
+    return 0;
 }
 
 void execute(Instruction *instruction)
 {
-    data_hazard(&currInstruction, &prevDecodedInstruction, &prevExecutedInstruction);
+
 
     execute_instruction(instruction);
+//    data_hazard(&currInstruction, &prevDecodedInstruction, &prevExecutedInstruction);
 }
 
 Instruction decode(int instructionBin)
@@ -304,6 +307,8 @@ Instruction decode(int instructionBin)
     decode_instruction(&instruction, instructionBin);
 
     instruction.pc = read_register(32) - 1;
+
+
 
     return instruction;
 }
@@ -333,24 +338,7 @@ int main()
     initialize_memory();
     readAssemblyFile("assembly.txt");
 
-    // write_memory(test0, 0);
-    // write_memory(test1, 1);
-    // write_memory(test2, 2);
-    // write_memory(test3, 3);
-    // write_memory(test4, 4);
-    // write_memory(test5, 5);
-    // write_memory(test6, 6);
 
-    // write_register(5, 5);
-    // write_register(3, 3);
-    // write_register(12, 12);
-    // write_register(4, 4);
-    // write_register(6, 6);
-    // write_register(8, 8);
-    // write_register(7, 7);
-    // write_register(9, 9);
-    // write_register(2, 2);
-    // write_register(1, 1);
 
     int instructionBin = -1;
 
@@ -361,33 +349,8 @@ int main()
     while (1)
     {
 
-        if (clock % 2 == 1)
-            instructionBin = fetch();
 
-        if (instructionBin == -1 && !finishedFetching)
-        {
-            finishedFetching = 1;
-            decodeEndClock = clock + 2;
-            executeEndClock = clock + 3;
-            memAccessEndClock = clock + 4;
-            writeBackEndClock = clock + 5;
-        }
-
-        // Hi ya Amr 👋
-        if (clock % 2 == 0 && clock != decodeEndClock)
-        {
-            prevExecutedInstruction = prevDecodedInstruction;
-            prevDecodedInstruction = currInstruction;
-            currInstruction = decode(instructionBin);
-        }
-
-        if (clock % 2 == 0 && clock >= 6 && clock != memAccessEndClock)
-        {
-
-            memAccess(&prevExecutedInstruction);
-        }
-
-        if (clock % 2 == 1 && clock >= 7 && clock != writeBackEndClock)
+        if (clock % 2 == 1 && clock >= 7 && clock < writeBackEndClock)
         {
             if (flush)
             {
@@ -398,16 +361,34 @@ int main()
             writeBack(&prevExecutedInstruction);
         }
 
-        if (clock % 2 == 1 && clock >= 5 && clock != executeEndClock)
+
+
+        if (clock % 2 == 0 && clock >= 6 && clock < memAccessEndClock)
+        {
+            if (flush)
+            {
+                instructionBin = 0;
+                flush = 0;
+            }
+
+            memAccess(&prevExecutedInstruction);
+        }
+
+
+
+        if (clock % 2 == 1 && clock >= 5 && clock < executeEndClock)
         {
 
-            if (prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0)
+            if ((prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0) || prevDecodedInstruction.opcode == 7) // JEQ or JMP
             {
                 instructionBin = 0;
                 currInstruction.opcode = 0;
                 currInstruction.r1 = 0;
                 currInstruction.r2 = 0;
                 currInstruction.r3 = 0;
+                currInstruction.r1_addr = 0;
+                currInstruction.r2_addr = 0;
+                currInstruction.r3_addr = 0;
                 currInstruction.result = 0;
                 flush = 1;
             }
@@ -415,11 +396,40 @@ int main()
             execute(&prevDecodedInstruction);
         }
 
+        // Hi ya Amr 👋
+        if (clock % 2 == 0)
+        {
+            prevExecutedInstruction = prevDecodedInstruction;
+            prevDecodedInstruction = currInstruction;
+
+            if (clock != decodeEndClock)
+                currInstruction = decode(instructionBin);
+        }
+
+        if (clock % 2 == 1 && !finishedFetching)
+            instructionBin = fetch();
+
+        if (instructionBin == -1 && !finishedFetching)
+        {
+            finishedFetching = 1;
+            decodeEndClock = clock + 1;
+            executeEndClock = clock + 3;
+            memAccessEndClock = clock + 4;
+            writeBackEndClock = clock + 5;
+            printf("FETCHING FINISHED\n");
+            printf("CLOCK: %d\n", clock);
+            printf("DECODE END CLOCK: %d\n", decodeEndClock);
+            printf("EXECUTE END CLOCK: %d\n", executeEndClock);
+            printf("MEM ACCESS END CLOCK: %d\n", memAccessEndClock);
+            printf("WRITE BACK END CLOCK: %d\n", writeBackEndClock);
+        }
+
         clock++;
         if (writeBackEndClock == clock)
             break;
         if (writeBackEndClock == clock)
             printf("HOW TF DID I RUN?!\n");
+
     }
 
     printf("Total Clock Cycles: %d\n", --clock);
