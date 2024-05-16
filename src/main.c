@@ -325,7 +325,7 @@ int fetch()
 
     if (instruction == -1)
         return -1;
-    printf("PC VALUE: %d, CLK: %d, R1: %d\n", pcValue, clock, (instruction >> 23) & 31);
+
 
     write_register(32, pcValue + 1);
 
@@ -337,7 +337,6 @@ int main()
 
     initialize_memory();
     readAssemblyFile("assembly.txt");
-
 
 
     int instructionBin = -1;
@@ -358,6 +357,7 @@ int main()
                 flush = 0;
             }
 
+
             writeBack(&prevExecutedInstruction);
         }
 
@@ -370,6 +370,15 @@ int main()
         if (clock % 2 == 1 && clock >= 5 && clock < executeEndClock)
         {
 
+
+
+            execute(&prevDecodedInstruction);
+
+            if ((prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0)){
+                prevDecodedInstruction.r1_addr = 32;
+                prevDecodedInstruction.result = prevDecodedInstruction.result;
+            }
+
             if ((prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0) || prevDecodedInstruction.opcode == 7) // JEQ or JMP
             {
                 instructionBin = 0;
@@ -380,11 +389,9 @@ int main()
                 currInstruction.r1_addr = 0;
                 currInstruction.r2_addr = 0;
                 currInstruction.r3_addr = 0;
-                currInstruction.result = 0;
+
                 flush = 1;
             }
-
-            execute(&prevDecodedInstruction);
         }
 
         // Hi ya Amr 👋
@@ -411,10 +418,19 @@ int main()
                 prevExecutedInstruction.result = memoryRead;
         }
 
-        if (clock % 2 == 1 && !finishedFetching)
+        if (clock % 2 == 1)
+        {
             instructionBin = fetch();
-
-        if (instructionBin == -1 && !finishedFetching)
+            if (instructionBin != -1 && finishedFetching) // if not end of instructions due to jumps
+            {
+                finishedFetching = 0;
+                decodeEndClock = TEN_MILLION;
+                executeEndClock = TEN_MILLION;
+                memAccessEndClock = TEN_MILLION;
+                writeBackEndClock = TEN_MILLION;
+            }
+        }
+        if (instructionBin == -1 && !finishedFetching) // end of instructions
         {
             finishedFetching = 1;
             decodeEndClock = clock + 1;

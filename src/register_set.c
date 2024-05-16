@@ -14,8 +14,10 @@ typedef struct Register_File
 } Register_File;
 
 
+
 /// @brief Singleton Register File
 static Register_File reg;
+
 
 /// @brief read the value from the register_no
 /// @param register_no 
@@ -64,6 +66,7 @@ void write_register(int register_no, int write_value)
     }
     if (register_no == 32)
     {
+
         // PC register
         reg.pc = write_value;
     }

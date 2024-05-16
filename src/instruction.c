@@ -133,6 +133,7 @@ void populate_I(Instruction *instruction, int instruction_value)
         instruction->result = immediate;
         instruction->r2_addr = 0;
     }
+
     // clear other fields
     instruction->address = -1;
     instruction->shamt = -1;

@@ -18,11 +18,15 @@ void movi(Instruction *instruction)
 
 void jeq(Instruction *instruction)
 {
-    
+
     if((instruction->r2 - instruction->r1) == 0){
         instruction->r1_addr = PC;
         instruction->result = instruction->pc+instruction->immediate;
+
+    }else{
+        instruction->r1_addr = 0;
     }
+    printf("jeq, r1: %d, r2: %d, r3: %d, result: %d\n", instruction->r1, instruction->r2, instruction->r3, instruction->result);
 }
 
 void and (Instruction * instruction)
@@ -74,6 +78,7 @@ void lsl(Instruction *instruction)
 
 void jmp(Instruction *instruction)
 {
+
     // PC = PC|31:28| concatenated with address|27:0|
 
     // copy the first 4 bits of PC to the first 4 bits of the result
@@ -86,4 +91,6 @@ void jmp(Instruction *instruction)
 
     // save the result in the instruction
     instruction->result = result;
+
+    printf("jmp, r1: %d, r2: %d, r3: %d, result: %d\n", instruction->r1, instruction->r2, instruction->r3, instruction->result);
 }
