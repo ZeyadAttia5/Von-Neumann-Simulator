@@ -392,6 +392,10 @@ int main()
 
                 flush = 1;
             }
+
+            if(prevDecodedInstruction.opcode == 4){
+                printf("JUMPING TO %d, R1: %d, R2: %d\n", prevDecodedInstruction.result, prevDecodedInstruction.r1, prevDecodedInstruction.r2);
+            }
         }
 
         // Hi ya Amr 👋
@@ -418,7 +422,7 @@ int main()
                 prevExecutedInstruction.result = memoryRead;
         }
 
-        if (clock % 2 == 1)
+        if (clock % 2 == 1 && !flush)
         {
             instructionBin = fetch();
             if (instructionBin != -1 && finishedFetching) // if not end of instructions due to jumps

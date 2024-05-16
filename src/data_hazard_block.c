@@ -49,6 +49,8 @@ void data_hazard(Instruction* curr_instruction, Instruction* prev_decoded, Instr
         {
             curr_instruction->r1 = prev_decoded->result;
         }
+
+
     }
 }
 
