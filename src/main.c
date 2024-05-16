@@ -15,7 +15,7 @@
 
 //                 -ADD-**1**--2--**imm**
 #define TEST_MOVI 0b00110000100010001010000000000000
-
+#define TEN_MILLION 10000000
 
 Instruction currInstruction, prevDecodedInstruction, prevExecutedInstruction;
 int clock = 1;
@@ -296,7 +296,7 @@ void execute(Instruction *instruction)
 
 
     execute_instruction(instruction);
-//    data_hazard(&currInstruction, &prevDecodedInstruction, &prevExecutedInstruction);
+    data_hazard(&currInstruction, &prevDecodedInstruction, &prevExecutedInstruction);
 }
 
 Instruction decode(int instructionBin)
@@ -344,7 +344,7 @@ int main()
 
     int finishedFetching = 0, flush = 0;
 
-    int decodeEndClock = -1, executeEndClock = -1, memAccessEndClock = -1, writeBackEndClock = -1;
+    int decodeEndClock = TEN_MILLION, executeEndClock = TEN_MILLION, memAccessEndClock = TEN_MILLION, writeBackEndClock = TEN_MILLION;
 
     while (1)
     {
@@ -363,16 +363,7 @@ int main()
 
 
 
-        if (clock % 2 == 0 && clock >= 6 && clock < memAccessEndClock)
-        {
-            if (flush)
-            {
-                instructionBin = 0;
-                flush = 0;
-            }
 
-            memAccess(&prevExecutedInstruction);
-        }
 
 
 
@@ -402,8 +393,22 @@ int main()
             prevExecutedInstruction = prevDecodedInstruction;
             prevDecodedInstruction = currInstruction;
 
-            if (clock != decodeEndClock)
+            if (clock < decodeEndClock)
                 currInstruction = decode(instructionBin);
+        }
+
+        if (clock % 2 == 0 && clock >= 6 && clock < memAccessEndClock)
+        {
+            if (flush)
+            {
+                instructionBin = 0;
+                flush = 0;
+            }
+
+            int memoryRead = memAccess(&prevExecutedInstruction);
+
+            if (prevExecutedInstruction.opcode == 10)
+                prevExecutedInstruction.result = memoryRead;
         }
 
         if (clock % 2 == 1 && !finishedFetching)

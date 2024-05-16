@@ -36,6 +36,16 @@ void data_hazard(Instruction* curr_instruction, Instruction* prev_decoded, Instr
         {
             curr_instruction->r2 = prev_decoded->result;
         }
+
+        if (curr_instruction->r1_addr != 0 && curr_instruction->r1_addr == prev_executed->r1_addr && curr_instruction->type != NULL && prev_executed->type != NULL && !strcmp(curr_instruction->type, "MOVM"))
+        {
+            curr_instruction->r1 = prev_executed->result;
+        }
+
+        if (curr_instruction->r1_addr != 0 && curr_instruction->r1_addr == prev_decoded->r1_addr && curr_instruction->type != NULL && prev_decoded->type != NULL && !strcmp(curr_instruction->type, "MOVM"))
+        {
+            curr_instruction->r1 = prev_decoded->result;
+        }
     }
 }
 
