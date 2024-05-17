@@ -294,9 +294,9 @@ int memAccess(Instruction *instruction)
 void execute(Instruction *instruction)
 {
 
+    data_hazard(&currInstruction, &prevDecodedInstruction, &prevExecutedInstruction);
 
     execute_instruction(instruction);
-    data_hazard(&currInstruction, &prevDecodedInstruction, &prevExecutedInstruction);
 }
 
 Instruction decode(int instructionBin)
@@ -357,8 +357,8 @@ int main()
                 flush = 0;
             }
 
-
-            writeBack(&prevExecutedInstruction);
+            if(prevExecutedInstruction.opcode != 4 || (prevExecutedInstruction.opcode == 4 && prevExecutedInstruction.will_branch))
+                writeBack(&prevExecutedInstruction);
         }
 
 
@@ -377,6 +377,7 @@ int main()
             if ((prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0)){
                 prevDecodedInstruction.r1_addr = 32;
                 prevDecodedInstruction.result = prevDecodedInstruction.result;
+                prevDecodedInstruction.will_branch = 1;
             }
 
             if ((prevDecodedInstruction.opcode == 4 && (prevDecodedInstruction.r2 - prevDecodedInstruction.r1) == 0) || prevDecodedInstruction.opcode == 7) // JEQ or JMP
@@ -389,12 +390,15 @@ int main()
                 currInstruction.r1_addr = 0;
                 currInstruction.r2_addr = 0;
                 currInstruction.r3_addr = 0;
+                currInstruction.type = "";
+                currInstruction.shamt = 0;
+                currInstruction.address = -1;
 
                 flush = 1;
             }
 
             if(prevDecodedInstruction.opcode == 4){
-                printf("JUMPING TO %d, R1: %d, R2: %d\n", prevDecodedInstruction.result, prevDecodedInstruction.r1, prevDecodedInstruction.r2);
+                printf("JEQ JUMPING TO %d, R1: %d, R2: %d\n", prevDecodedInstruction.result, prevDecodedInstruction.r1, prevDecodedInstruction.r2);
             }
         }
 
@@ -422,6 +426,8 @@ int main()
                 prevExecutedInstruction.result = memoryRead;
         }
 
+
+
         if (clock % 2 == 1 && !flush)
         {
             instructionBin = fetch();
@@ -433,6 +439,9 @@ int main()
                 memAccessEndClock = TEN_MILLION;
                 writeBackEndClock = TEN_MILLION;
             }
+        }else if(clock % 2 == 1 && flush){
+            // increment PC
+            write_register(32, read_register(32) + 1);
         }
         if (instructionBin == -1 && !finishedFetching) // end of instructions
         {

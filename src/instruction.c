@@ -69,6 +69,7 @@ void decode_instruction(Instruction *instruction, int instruction_value)
     {
         populate_I(instruction, instruction_value);
     }
+    instruction->will_branch = 0;
 }
 
 /// @brief Instruction R Format: Opcode(4) | R1(5) | R2(5) | R3(5) | Shamt(13)

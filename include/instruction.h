@@ -24,6 +24,7 @@ typedef struct Instruction
     char *type;
     int pc;
     int result;
+    int will_branch;
 } Instruction;
 
 void decode_instruction(Instruction *instruction, int instruction_value);
