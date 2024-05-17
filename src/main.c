@@ -208,10 +208,11 @@ void parseTokens(char **tokens, const int memoryAddress)
             }
             else
             {
+
                 int r3 = (opcode == 8 | opcode == 9) ? 0 : convertRegStrToInt(token);
                 instruction |= (r3 << 13);
 
-                token = trimwhitespace(*(tokens + 2));
+                token = trimwhitespace(*(tokens + 3));
                 int shamt = atoi(token);
 
                 instruction |= shamt;
@@ -397,9 +398,7 @@ int main()
                 flush = 1;
             }
 
-            if(prevDecodedInstruction.opcode == 4){
-                printf("JEQ JUMPING TO %d, R1: %d, R2: %d\n", prevDecodedInstruction.result, prevDecodedInstruction.r1, prevDecodedInstruction.r2);
-            }
+
         }
 
         // Hi ya Amr 👋

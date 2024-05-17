@@ -57,7 +57,7 @@ void decode_instruction(Instruction *instruction, int instruction_value)
 
     char *instr_type = instruction->type;
 
-    if (!strcmp(instr_type, "ADD") || !strcmp(instr_type, "SUB") || !strcmp(instr_type, "MUL") || !strcmp(instr_type, "AND") || !strcmp(instr_type, "LSL") || !strcmp(instr_type, "LSL"))
+    if (!strcmp(instr_type, "ADD") || !strcmp(instr_type, "SUB") || !strcmp(instr_type, "MUL") || !strcmp(instr_type, "AND") || !strcmp(instr_type, "LSL") || !strcmp(instr_type, "LSR"))
     {
         populate_R(instruction, instruction_value);
     }
@@ -85,7 +85,7 @@ void populate_R(Instruction *instruction, int instruction_value)
     char r1_addr = (instruction_value >> 23) & 31;
     char r2_addr = ((instruction_value >> 18) & 31);
     char r3_addr = ((instruction_value >> 13) & 31);
-    int shamt = instruction_value & 8191;
+    int shamt = instruction_value & 0b1111111111111;
 
     instruction->r1 = r1;
     instruction->r2 = r2;

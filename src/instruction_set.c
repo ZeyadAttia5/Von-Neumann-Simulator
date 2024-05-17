@@ -25,7 +25,7 @@ void jeq(Instruction *instruction)
         instruction->will_branch = 1;
 
     }
-    printf("jeq, r1: %d, r2: %d, r3: %d, result: %d, r1_addr: %d, immediate: %d\n", instruction->r1, instruction->r2, instruction->r3, instruction->result, instruction->r1_addr, instruction->immediate);
+
 }
 
 void and (Instruction * instruction)
@@ -46,6 +46,8 @@ void sub(Instruction *instruction)
 void lsr(Instruction *instruction)
 {
     instruction->result = LOGI_RSHIFT_REG(instruction->r2, instruction->shamt);
+    printf("lsr, r1: %d, r2: %d, r3: %d, result: %d, r1_addr: %d, immediate: %d, shamt: %d, r1_addr: %d\n", instruction->r1, instruction->r2, instruction->r3, instruction->result, instruction->r1_addr, instruction->immediate, instruction->shamt, instruction->r1_addr);
+
 }
 
 void movr(Instruction *instruction)
@@ -73,6 +75,7 @@ void xori(Instruction *instruction)
 void lsl(Instruction *instruction)
 {
     instruction->result = instruction->r2 << instruction->shamt;
+
 }
 
 void jmp(Instruction *instruction)
@@ -91,5 +94,5 @@ void jmp(Instruction *instruction)
     // save the result in the instruction
     instruction->result = result;
 
-    printf("jmp, r1: %d, r2: %d, r3: %d, result: %d, r1_addr: %d, immediate: %d\n", instruction->r1, instruction->r2, instruction->r3, instruction->result, instruction->r1_addr, instruction->immediate);
+
 }
